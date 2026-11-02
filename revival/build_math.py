@@ -31,6 +31,8 @@ from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.ttLib import TTFont
 
 import build_font as bf
+from mirror_ge import complete_ge
+from compose_colon_equals import complete_colon_equals
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORK = os.path.join(HERE, "work")
@@ -637,7 +639,7 @@ def main():
                        "psName": "Mills8A-Math"}, lm="latinmodern-math.otf")
     fb.setupOS2(sTypoAscender=lm["OS/2"].sTypoAscender, sTypoDescender=lm["OS/2"].sTypoDescender,
                 usWinAscent=lm["OS/2"].usWinAscent, usWinDescent=lm["OS/2"].usWinDescent,
-                sxHeight=440, sCapHeight=650)
+                sxHeight=440, sCapHeight=650, fsSelection=0x40)
     fb.setupPost()
     # coverage tables must list glyphs in glyph-id order
     gid = {g: i for i, g in enumerate(glyph_order)}
@@ -651,9 +653,12 @@ def main():
         kern.MathKernInfoRecords = resort(kern.MathKernCoverage, kern.MathKernInfoRecords)
     for t in ("MATH", "GSUB", "GPOS", "GDEF"):
         fb.font[t] = lm[t]
+    # Match ≥ to the completed ≤ sorts, including script spacing and height.
+    complete_ge(fb.font)
+    complete_colon_equals(fb.font)
     out = os.path.join(FONTS, "Mills8A-Math.otf")
     fb.save(out)
-    print(f"wrote {out}: {len(glyph_order)} glyphs")
+    print(f"wrote {out}: {len(fb.font.getGlyphOrder())} glyphs")
 
 
 if __name__ == "__main__":

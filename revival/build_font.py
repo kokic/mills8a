@@ -42,13 +42,17 @@ def stamp_version(fb, names, lm="lmroman10-regular.otf"):
                           text=True).stdout.strip()
     lm_notice = " ".join(TTFont(path)["name"].getDebugName(0).split())
     copyright = f"Copyright 2026 heiner. Modified from Latin Modern: {lm_notice}"
+    top = fb.font["CFF "].cff.topDictIndex[0]
+    # Include full and unique names for desktop font installation, not just
+    # the family/style and PostScript names used by TeX.
     fb.setupNameTable(dict(
-        names, version=f"Version {VERSION}", copyright=copyright,
+        names, fullName=top.FullName,
+        uniqueFontIdentifier=f"{VERSION};{names['psName']}",
+        version=f"Version {VERSION}", copyright=copyright,
         description="Monotype Modern 8A traced from 1940s Bulletin AMS printing; "
                     "the changes to Latin Modern are listed in LICENSE.",
         licenseDescription="GUST Font License (LPPL 1.3c or later)",
         licenseInfoURL="http://tug.org/fonts/licenses/GUST-FONT-LICENSE.txt"))
-    top = fb.font["CFF "].cff.topDictIndex[0]
     top.Copyright = copyright
     top.Notice = "Mills 8A, GUST Font License"
     major, minor = VERSION.split(".")[:2]

@@ -262,6 +262,19 @@ delimiters and all symbols the scans don't have. On top of that:
 
 - Math italic and upright letters, Greek, figures and operators are the
   Mills 8A glyphs (141 replaced).
+- ≥ (U+2265) and its two script variants are horizontal mirrors of the
+  Mills 8A ≤ sorts, with matching widths and vertical positions. The build
+  applies `mirror_ge.py`; it can also patch an existing OTF without the scans:
+  `uv run --with fonttools python revival/mirror_ge.py INPUT.otf OUTPUT.otf`
+  (run from the repository root).
+- ≔ (U+2254) and ≕ (U+2255), including both script variants, are composed
+  from the corresponding Mills 8A colon and equals sorts. The colon is
+  vertically centred on the equals sign; the components' side bearings
+  supply the internal gap. The build applies `compose_colon_equals.py`,
+  also usable without the scans from the repository root:
+  `uv run --with fonttools python revival/compose_colon_equals.py INPUT.otf OUTPUT.otf`.
+  This replaces the single Unicode characters, not the two-character
+  sequences `:=` and `=:` (no ligature is added).
 - The `ssty` script (`.st`) and scriptscript (`.sts`) variants are the
   **real 1947 script sorts** where they exist. Otherwise they're the text
   glyphs thickened to the script sorts' weight, so scaled-down letters
